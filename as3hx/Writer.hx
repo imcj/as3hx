@@ -1888,6 +1888,7 @@ class Writer
             case ENew( t, params ):
                 //write("/* " +context.get(tstring(t,false,false))+ " */");
                 var origType = context.get(tstring(t,false,false));
+
                 if(origType == "Class<Dynamic>") {
                     write("Type.createInstance(");
                     write(tstring(t,false,false));
@@ -1900,6 +1901,11 @@ class Writer
                     }
                     write("])");
                 } 
+                else if (tstring(t) == "String") {
+                    write("Std.string(");
+                    writeExpr(params[0]);
+                    write(");");
+                }
                 //in AS3, if Date constructed without argument, uses current time
                 else if (tstring(t) == "Date" && params.length == 0) {
                       write("Date.now()"); //use Haxe constructor for current time
