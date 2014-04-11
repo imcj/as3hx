@@ -100,4 +100,12 @@ class Compat {
         }
         return _(ECall( _(EField( _(EConst(CIdent("Std"))), "parseInt")), [_(ECall( _(EField( _(EConst(CIdent("Std"))), "string")), [e]))]));
     }
+
+    static public function getClassName(v1:Dynamic):String
+    {
+        if (Std.is(v1, Class))
+            return Type.getClassName(v1);
+        else
+            return getClassName(Type.getClass(v1));
+    }
 }

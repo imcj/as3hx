@@ -1703,7 +1703,8 @@ class Writer
                     for (incr in incrs) {
                         es.push(ENL(incr));
                     }
-                }
+                } else
+                    incrs = [];
 
                 writeLoop(incrs, function() { writeExpr(EBlock(es)); });
                 closeContext();
