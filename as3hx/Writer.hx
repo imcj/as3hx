@@ -1219,10 +1219,19 @@ class Writer
                             write(", Array</*AS3HX WARNING no type*/>) catch(e:Dynamic) null");
                             addWarning("as array", true);
                         case "Class":
-                            addWarning("as Class",true);
-                            write("Type.getClass(");
+                            switch (e1) {
+                                case EIdent(v):
+                                    if(context.get(v) != "Class<Dynamic>") {
+                                        addWarning("as Class",true);
+                                        write("Type.getClass(");
+                                        writeExpr(e1);
+                                        write(")");
+                                    }
+
+                                default:
+                            }
                             writeExpr(e1);
-                            write(")");
+                            
                         default:
                             write("try cast(");
                             writeExpr(e1);
@@ -1889,6 +1898,7 @@ class Writer
                 //write("/* " +context.get(tstring(t,false,false))+ " */");
                 var origType = context.get(tstring(t,false,false));
 
+
                 if(origType == "Class<Dynamic>") {
                     write("Type.createInstance(");
                     write(tstring(t,false,false));
@@ -1910,22 +1920,36 @@ class Writer
                 else if (tstring(t) == "Date" && params.length == 0) {
                       write("Date.now()"); //use Haxe constructor for current time
                 } else {
-                    write("new " + tstring(t) + "(");
-                    var out = true;
-                    // prevent params when converting vector to array
-                    switch(t) {
-                    case TVector(_): out = !cfg.vectorToArray;
-                    default:
-                    }
-                    if(out) {
+                    switch (t) {
+                    case TComplex(e):
+                        write("Type.createInstance(");
+                        writeExpr(e);
+                        write(", [");
                         for (i in 0...params.length)
                         {
                             if (i > 0)
                                 write(", ");
                             writeExpr(params[i]);
                         }
+                        write("])");
+                    default:
+                        write("new " + tstring(t) + "(");
+                        var out = true;
+                        // prevent params when converting vector to array
+                        switch(t) {
+                        case TVector(_): out = !cfg.vectorToArray;
+                        default:
+                        }
+                        if(out) {
+                            for (i in 0...params.length)
+                            {
+                                if (i > 0)
+                                    write(", ");
+                                writeExpr(params[i]);
+                            }
+                        }
+                        write(")");
                     }
-                    write(")");
                 }
             case EThrow( e ):
                 write("throw ");

@@ -1748,23 +1748,26 @@ class Parser {
                 var t = parseType();
                 // o = new (iconOrLabel as Class)() as DisplayObject
                 var cc = switch (t) {
-                                    case TComplex(e1) : 
-                                    switch (e1) {
-                                        case EBinop(op, e2, e3, n): 
-                                        if (op == "as") {
-                                            switch (e2) {
-                                                case ECall(e4, a): 
-                                                EBinop(op, ECall(EField(EIdent("Type"), "createInstance"), [e4, EArrayDecl(a)]), e3, n);
-                                                default: 
-                                                null;
-                                            }
-                                        }
-                                        return null;
-                                        default: 
-                                        null;
-                                    }
-                                    default: 
-                                    null;
+                    case TComplex(e1) : 
+                    switch (e1) {
+                        case EBinop(op, e2, e3, n): 
+                        if (op == "as") {
+                            switch (e2) {
+                                case ECall(e4, a): 
+                                EBinop(op, ECall(EField(EIdent("Type"), "createInstance"), [e4, EArrayDecl(a)]), e3, n);
+                                default: 
+                                null;
+                            }
+                        }
+                        return null;
+                        // o = new (cls as Class)();
+                        case ECall(e2, p1):
+                            ECall(EField(EIdent("Type"), "createInstance"), [e2, EArrayDecl(p1)]);
+                        default:
+                        null;
+                    }
+                    default: 
+                    null;
                 }
                 if (cc != null) cc; else ENew(t,if( opt(TPOpen) ) parseExprList(TPClose) else []);
             }
