@@ -1904,7 +1904,7 @@ class Writer
                 else if (tstring(t) == "String") {
                     write("Std.string(");
                     writeExpr(params[0]);
-                    write(");");
+                    write(")");
                 }
                 //in AS3, if Date constructed without argument, uses current time
                 else if (tstring(t) == "Date" && params.length == 0) {
