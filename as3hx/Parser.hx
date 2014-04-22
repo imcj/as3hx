@@ -421,8 +421,6 @@ class Parser {
                 unexpected(t);
             }
         }
-        
-        
 
         // parse package
         var imports = [];
@@ -1857,7 +1855,7 @@ class Parser {
             ensure(TPOpen);
             var e = parseExpr();
             ensure(TPClose);
-            ECall(EField(EIdent("Type"), "getClassName"), [e]);
+            ECall(EField(EIdent("as3hx.Compat"), "getClassName"), [e]);
         case "getQualifiedSuperclassName":
             ensure(TPOpen);
             var e = parseExpr();
