@@ -3066,8 +3066,8 @@ class Writer
     {
         if (lineIsDirty)
             s = "  " + s + "  ";
-
         write(s);    
+        write('\n');
     }
 
     function writeIndent(s = "")
