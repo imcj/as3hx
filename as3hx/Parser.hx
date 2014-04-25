@@ -1006,6 +1006,50 @@ class Parser {
         };
         pf(false, false);
 
+        // replace class property iniaialize into constructor tail
+        var inits_field:Array<{field:ClassField, expression:Expr}> = [];
+        var constructor:ClassField = null;
+
+        for (field in fields) {
+            switch (field.kind) {
+                case FVar(t, val):
+                    if (null != val) {
+                        switch (val) {
+                            case ENew(t, p):
+                                inits_field.push(
+                                    {field: field, expression: val});
+                                field.kind = FVar(t, null);
+                            default:
+                        }
+                    }
+                case FFun(f):
+                    if (field.name == cname)
+                        constructor = field;
+
+                default:
+            }
+        }
+
+        if (null != constructor) {
+            switch(constructor.kind) {
+                case FFun(f):
+                    for (c in inits_field) {
+                        switch (f.expr) {
+                            case EBlock(e):
+                                e.push(ENL(null));
+                                e.push(
+                                    EBinop('=', 
+                                           EIdent(c.field.name),
+                                           c.expression,
+                                           false)
+                                );
+                            default:
+                        }
+                    }
+                default:
+            }
+        }
+
         //trace("*** " + meta);
         for(m in meta) {
             switch(m) {
